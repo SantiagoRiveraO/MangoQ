@@ -132,8 +132,8 @@ export function SalesHistory({ sales }: SalesHistoryProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-border">
-            <Table>
+          <div className="rounded-lg border border-border overflow-x-auto">
+            <Table className="min-w-[750px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Nº Venta</TableHead>

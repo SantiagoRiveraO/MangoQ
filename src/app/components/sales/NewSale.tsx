@@ -326,8 +326,8 @@ export function NewSale({
         </DialogContent>
       </Dialog>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+        <Card className="lg:col-span-2 min-w-0">
           <CardHeader>
             <CardTitle>Productos</CardTitle>
             <div className="relative">

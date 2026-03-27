@@ -171,8 +171,8 @@ export function Clients({ clients, onUpdateClients }: ClientsProps) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border">
-            <Table>
+          <div className="rounded-lg border border-border overflow-x-auto">
+            <Table className="min-w-[650px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Nombre</TableHead>

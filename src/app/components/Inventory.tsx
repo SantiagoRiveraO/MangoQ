@@ -207,8 +207,8 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border">
-            <Table>
+          <div className="rounded-lg border border-border overflow-x-auto">
+            <Table className="min-w-[700px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>SKU</TableHead>

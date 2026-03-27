@@ -249,8 +249,8 @@ export function Reports({ sales, products }: ReportsProps) {
           <CardTitle>Top 10 Productos Más Vendidos</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-border">
-            <Table>
+          <div className="rounded-lg border border-border overflow-x-auto">
+            <Table className="min-w-[500px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Posición</TableHead>
