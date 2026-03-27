@@ -132,67 +132,96 @@ export function SalesHistory({ sales }: SalesHistoryProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-border overflow-x-auto">
-            <Table className="min-w-[750px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nº Venta</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Pago</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-center">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSales.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                      No se encontraron ventas
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredSales.map((sale) => (
-                    <TableRow key={sale.id}>
-                      <TableCell className="font-mono text-xs">
-                        #{sale.id.slice(-6).toUpperCase()}
-                      </TableCell>
-                      <TableCell>{sale.clientName || 'Cliente General'}</TableCell>
-                      <TableCell>
-                        {new Date(sale.date).toLocaleDateString('es')}{' '}
-                        <span className="text-muted-foreground text-xs">
-                          {new Date(sale.date).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </TableCell>
-                      <TableCell>{sale.items.length} producto{sale.items.length !== 1 ? 's' : ''}</TableCell>
-                      <TableCell>{paymentLabels[sale.paymentMethod]}</TableCell>
-                      <TableCell className="text-right">${sale.total.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={sale.status === 'completed' ? 'default' : 'destructive'}
-                          className={sale.status === 'completed' ? 'bg-green-500 hover:bg-green-500' : ''}
-                        >
-                          {sale.status === 'completed' ? 'Completada' : 'Pendiente'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setViewingSale(sale)}
-                          title="Ver comprobante"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+          {filteredSales.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No se encontraron ventas</p>
+          ) : (
+            <>
+              {/* Mobile: cards */}
+              <div className="space-y-3 md:hidden">
+                {filteredSales.map((sale) => (
+                  <div
+                    key={sale.id}
+                    className="rounded-lg border border-border p-4 space-y-2 cursor-pointer hover:bg-accent/50 transition-colors"
+                    onClick={() => setViewingSale(sale)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs">#{sale.id.slice(-6).toUpperCase()}</span>
+                      <Badge
+                        variant={sale.status === 'completed' ? 'default' : 'destructive'}
+                        className={sale.status === 'completed' ? 'bg-green-500 hover:bg-green-500' : ''}
+                      >
+                        {sale.status === 'completed' ? 'Completada' : 'Pendiente'}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">{sale.clientName || 'Cliente General'}</span>
+                      <span className="font-medium text-primary">${sale.total.toFixed(2)}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 text-xs text-muted-foreground">
+                      <span>{new Date(sale.date).toLocaleDateString('es')} {new Date(sale.date).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span>{sale.items.length} producto{sale.items.length !== 1 ? 's' : ''}</span>
+                      <span>{paymentLabels[sale.paymentMethod]}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: table */}
+              <div className="hidden md:block rounded-lg border border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº Venta</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Fecha</TableHead>
+                      <TableHead>Items</TableHead>
+                      <TableHead>Pago</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className="text-center">Acciones</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredSales.map((sale) => (
+                      <TableRow key={sale.id}>
+                        <TableCell className="font-mono text-xs">
+                          #{sale.id.slice(-6).toUpperCase()}
+                        </TableCell>
+                        <TableCell>{sale.clientName || 'Cliente General'}</TableCell>
+                        <TableCell>
+                          {new Date(sale.date).toLocaleDateString('es')}{' '}
+                          <span className="text-muted-foreground text-xs">
+                            {new Date(sale.date).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </TableCell>
+                        <TableCell>{sale.items.length} producto{sale.items.length !== 1 ? 's' : ''}</TableCell>
+                        <TableCell>{paymentLabels[sale.paymentMethod]}</TableCell>
+                        <TableCell className="text-right">${sale.total.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={sale.status === 'completed' ? 'default' : 'destructive'}
+                            className={sale.status === 'completed' ? 'bg-green-500 hover:bg-green-500' : ''}
+                          >
+                            {sale.status === 'completed' ? 'Completada' : 'Pendiente'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setViewingSale(sale)}
+                            title="Ver comprobante"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

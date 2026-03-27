@@ -89,7 +89,7 @@ export function Clients({ clients, onUpdateClients }: ClientsProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Gestión de Clientes</CardTitle>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -171,73 +171,98 @@ export function Clients({ clients, onUpdateClients }: ClientsProps) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border overflow-x-auto">
-            <Table className="min-w-[650px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Contacto</TableHead>
-                  <TableHead>Dirección</TableHead>
-                  <TableHead>Fecha de Registro</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredClients.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      No se encontraron clientes
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredClients.map((client) => (
-                    <TableRow key={client.id}>
-                      <TableCell>{client.name}</TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Mail className="h-3 w-3 text-muted-foreground" />
-                            {client.email}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="h-3 w-3 text-muted-foreground" />
-                            {client.phone}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="h-3 w-3 text-muted-foreground" />
-                          {client.address}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(client.createdAt).toLocaleDateString('es')}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(client)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(client.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+          {filteredClients.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No se encontraron clientes</p>
+          ) : (
+            <>
+              {/* Mobile: cards */}
+              <div className="space-y-3 md:hidden">
+                {filteredClients.map((client) => (
+                  <div key={client.id} className="rounded-lg border border-border p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-medium">{client.name}</p>
+                      <div className="flex gap-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(client)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(client.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-1 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{client.email}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-3 w-3 shrink-0" />
+                        <span>{client.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{client.address}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Registro: {new Date(client.createdAt).toLocaleDateString('es')}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: table */}
+              <div className="hidden md:block rounded-lg border border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nombre</TableHead>
+                      <TableHead>Contacto</TableHead>
+                      <TableHead>Dirección</TableHead>
+                      <TableHead>Fecha de Registro</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredClients.map((client) => (
+                      <TableRow key={client.id}>
+                        <TableCell>{client.name}</TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 text-sm">
+                              <Mail className="h-3 w-3 text-muted-foreground" />
+                              {client.email}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm">
+                              <Phone className="h-3 w-3 text-muted-foreground" />
+                              {client.phone}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2 text-sm">
+                            <MapPin className="h-3 w-3 text-muted-foreground" />
+                            {client.address}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(client.createdAt).toLocaleDateString('es')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="icon" onClick={() => handleEdit(client)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(client.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 

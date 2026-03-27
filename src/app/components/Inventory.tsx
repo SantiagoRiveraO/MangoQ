@@ -102,7 +102,7 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Gestión de Inventario</CardTitle>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -207,77 +207,112 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border overflow-x-auto">
-            <Table className="min-w-[700px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead className="text-right">Precio</TableHead>
-                  <TableHead className="text-right">Stock</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
-                      No se encontraron productos
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredProducts.map((product) => {
-                    const status = getStockStatus(product.stock);
-                    return (
-                      <TableRow key={product.id}>
-                        <TableCell>{product.sku}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p>{product.name}</p>
-                            <p className="text-xs text-muted-foreground">{product.description}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{product.category}</TableCell>
-                        <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">{product.stock}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={status.variant}
-                            className={product.stock < 10 && product.stock > 0 ? 'bg-yellow-500' : ''}
-                          >
-                            {product.stock < 10 && product.stock > 0 && (
-                              <AlertCircle className="mr-1 h-3 w-3" />
-                            )}
-                            {status.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleEdit(product)}
+          {filteredProducts.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No se encontraron productos</p>
+          ) : (
+            <>
+              {/* Mobile: cards */}
+              <div className="space-y-3 md:hidden">
+                {filteredProducts.map((product) => {
+                  const status = getStockStatus(product.stock);
+                  return (
+                    <div key={product.id} className="rounded-lg border border-border p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{product.name}</p>
+                          <p className="text-xs text-muted-foreground">{product.description}</p>
+                        </div>
+                        <Badge
+                          variant={status.variant}
+                          className={`shrink-0 ${product.stock < 10 && product.stock > 0 ? 'bg-yellow-500' : ''}`}
+                        >
+                          {product.stock < 10 && product.stock > 0 && (
+                            <AlertCircle className="mr-1 h-3 w-3" />
+                          )}
+                          {status.label}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span>SKU: {product.sku}</span>
+                        <span>{product.category}</span>
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="flex gap-4 text-sm">
+                          <span className="font-medium text-foreground">${product.price.toFixed(2)}</span>
+                          <span>Stock: {product.stock}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(product)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(product.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop: table */}
+              <div className="hidden md:block rounded-lg border border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>SKU</TableHead>
+                      <TableHead>Nombre</TableHead>
+                      <TableHead>Categoría</TableHead>
+                      <TableHead className="text-right">Precio</TableHead>
+                      <TableHead className="text-right">Stock</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredProducts.map((product) => {
+                      const status = getStockStatus(product.stock);
+                      return (
+                        <TableRow key={product.id}>
+                          <TableCell>{product.sku}</TableCell>
+                          <TableCell>
+                            <div>
+                              <p>{product.name}</p>
+                              <p className="text-xs text-muted-foreground">{product.description}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>{product.category}</TableCell>
+                          <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">{product.stock}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={status.variant}
+                              className={product.stock < 10 && product.stock > 0 ? 'bg-yellow-500' : ''}
                             >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(product.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                              {product.stock < 10 && product.stock > 0 && (
+                                <AlertCircle className="mr-1 h-3 w-3" />
+                              )}
+                              {status.label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button variant="ghost" size="icon" onClick={() => handleEdit(product)}>
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
