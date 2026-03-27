@@ -23,7 +23,9 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     name: '',
     description: '',
-    price: 0,
+    priceRetail: 0,
+    priceWholesale: 0,
+    priceSpecial: 0,
     stock: 0,
     category: '',
     sku: ''
@@ -60,7 +62,9 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
     setFormData({
       name: product.name,
       description: product.description,
-      price: product.price,
+      priceRetail: product.priceRetail,
+      priceWholesale: product.priceWholesale,
+      priceSpecial: product.priceSpecial,
       stock: product.stock,
       category: product.category,
       sku: product.sku
@@ -85,7 +89,9 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
     setFormData({
       name: '',
       description: '',
-      price: 0,
+      priceRetail: 0,
+      priceWholesale: 0,
+      priceSpecial: 0,
       stock: 0,
       category: '',
       sku: ''
@@ -157,14 +163,14 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="price">Precio</Label>
+                        <Label htmlFor="priceRetail">Precio Detal</Label>
                         <Input
-                          id="price"
+                          id="priceRetail"
                           type="number"
                           step="0.01"
                           min="0"
-                          value={formData.price}
-                          onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                          value={formData.priceRetail}
+                          onChange={(e) => setFormData({ ...formData, priceRetail: parseFloat(e.target.value) || 0 })}
                           required
                         />
                       </div>
@@ -176,6 +182,32 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
                           min="0"
                           value={formData.stock}
                           onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="priceWholesale">Precio Mayor</Label>
+                        <Input
+                          id="priceWholesale"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={formData.priceWholesale}
+                          onChange={(e) => setFormData({ ...formData, priceWholesale: parseFloat(e.target.value) || 0 })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="priceSpecial">Precio Especial</Label>
+                        <Input
+                          id="priceSpecial"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={formData.priceSpecial}
+                          onChange={(e) => setFormData({ ...formData, priceSpecial: parseFloat(e.target.value) || 0 })}
                           required
                         />
                       </div>
@@ -237,9 +269,14 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
                         <span>{product.category}</span>
                       </div>
                       <div className="flex items-center justify-between pt-1">
-                        <div className="flex gap-4 text-sm">
-                          <span className="font-medium text-foreground">${product.price.toFixed(2)}</span>
-                          <span>Stock: {product.stock}</span>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex gap-3">
+                            <span className="font-medium text-foreground">Detal: ${product.priceRetail.toFixed(2)}</span>
+                            <span>Stock: {product.stock}</span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Mayor: ${product.priceWholesale.toFixed(2)} | Especial: ${product.priceSpecial.toFixed(2)}
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(product)}>
@@ -263,7 +300,9 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
                       <TableHead>SKU</TableHead>
                       <TableHead>Nombre</TableHead>
                       <TableHead>Categoría</TableHead>
-                      <TableHead className="text-right">Precio</TableHead>
+                      <TableHead className="text-right">Detal</TableHead>
+                      <TableHead className="text-right">Mayor</TableHead>
+                      <TableHead className="text-right">Especial</TableHead>
                       <TableHead className="text-right">Stock</TableHead>
                       <TableHead>Estado</TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
@@ -282,7 +321,9 @@ export function Inventory({ products, onUpdateProducts }: InventoryProps) {
                             </div>
                           </TableCell>
                           <TableCell>{product.category}</TableCell>
-                          <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">${product.priceRetail.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">${product.priceWholesale.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">${product.priceSpecial.toFixed(2)}</TableCell>
                           <TableCell className="text-right">{product.stock}</TableCell>
                           <TableCell>
                             <Badge

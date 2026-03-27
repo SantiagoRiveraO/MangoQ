@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { Client, Product, Sale, SaleItem } from '../../types';
+import { Client, Product, Sale, SaleItem, PriceType } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Search, ShoppingCart, Minus, Plus, Trash2, ReceiptText, CheckCircle, Printer } from 'lucide-react';
 import { Input } from '../ui/input';
@@ -23,6 +23,12 @@ interface NewSaleProps {
 
 type PaymentMethod = 'cash' | 'card' | 'transfer';
 
+const priceTypeLabels: Record<PriceType, string> = {
+  retail: 'Detal',
+  wholesale: 'Mayor',
+  special: 'Especial',
+};
+
 export function NewSale({
   products,
   sales,
@@ -34,6 +40,7 @@ export function NewSale({
   const [cart, setCart] = useState<SaleItem[]>([]);
   const [selectedClient, setSelectedClient] = useState<string>('none');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
+  const [priceType, setPriceType] = useState<PriceType>('retail');
   const [searchTerm, setSearchTerm] = useState('');
   const [completedSale, setCompletedSale] = useState<Sale | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -53,6 +60,7 @@ export function NewSale({
   };
 
   const addToCart = (product: Product) => {
+    const unitPrice = getUnitPrice(product, priceType);
     const existingItem = cart.find((item) => item.productId === product.id);
     if (existingItem) {
       if (existingItem.quantity < product.stock) {
@@ -69,9 +77,10 @@ export function NewSale({
       setCart([...cart, {
         productId: product.id,
         productName: product.name,
+        priceType,
         quantity: 1,
-        price: product.price,
-        subtotal: product.price,
+        price: unitPrice,
+        subtotal: unitPrice,
       }]);
     }
   };
@@ -117,6 +126,12 @@ export function NewSale({
 
   const getProductStock = (productId: string) =>
     products.find((product) => product.id === productId)?.stock ?? 0;
+
+  const getUnitPrice = (product: Product, selectedPriceType: PriceType) => {
+    if (selectedPriceType === 'wholesale') return product.priceWholesale;
+    if (selectedPriceType === 'special') return product.priceSpecial;
+    return product.priceRetail;
+  };
 
   const calculateTotal = () => cart.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -341,6 +356,19 @@ export function NewSale({
                 autoFocus
               />
             </div>
+            <div className="space-y-2 max-w-[220px]">
+              <Label>Tipo de precio</Label>
+              <Select value={priceType} onValueChange={(v: PriceType) => setPriceType(v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="retail">Detal</SelectItem>
+                  <SelectItem value="wholesale">Mayor</SelectItem>
+                  <SelectItem value="special">Especial</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <p className="text-xs text-muted-foreground">
               Presiona Enter para agregar el primer resultado disponible.
             </p>
@@ -367,7 +395,8 @@ export function NewSale({
                       <p className="text-xs text-muted-foreground">{product.sku}</p>
                     </div>
                     <div className="text-right">
-                      <p>${product.price.toFixed(2)}</p>
+                      <p>${getUnitPrice(product, priceType).toFixed(2)}</p>
+                      <p className="text-[11px] text-muted-foreground">{priceTypeLabels[priceType]}</p>
                       <p className={`text-xs ${product.stock === 0 ? 'text-red-500' : product.stock < 10 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
                         Stock: {product.stock}
                       </p>
@@ -423,6 +452,11 @@ export function NewSale({
                         <p className="text-xs text-muted-foreground">
                           ${item.price.toFixed(2)} × {item.quantity} = <span className="text-foreground">${item.subtotal.toFixed(2)}</span>
                         </p>
+                        {item.priceType && (
+                          <p className="text-[11px] text-muted-foreground">
+                            Precio: {priceTypeLabels[item.priceType]}
+                          </p>
+                        )}
                         <p className="text-[11px] text-muted-foreground">
                           Max: {itemStock}
                         </p>

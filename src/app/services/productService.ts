@@ -5,7 +5,10 @@ interface ProductRow {
   id: string;
   name: string;
   description: string;
-  price: number;
+  price?: number;
+  price_retail?: number;
+  price_wholesale?: number;
+  price_special?: number;
   stock: number;
   category: string;
   sku: string;
@@ -16,7 +19,10 @@ const toProduct = (row: ProductRow): Product => ({
   id: row.id,
   name: row.name,
   description: row.description,
-  price: row.price,
+  // Fallbacks maintain compatibility if legacy `price` still exists.
+  priceRetail: row.price_retail ?? row.price ?? 0,
+  priceWholesale: row.price_wholesale ?? row.price ?? 0,
+  priceSpecial: row.price_special ?? row.price ?? 0,
   stock: row.stock,
   category: row.category,
   sku: row.sku,
@@ -39,7 +45,9 @@ export async function createProduct(product: Omit<Product, 'id'>): Promise<Produ
     .insert({
       name: product.name,
       description: product.description,
-      price: product.price,
+      price_retail: product.priceRetail,
+      price_wholesale: product.priceWholesale,
+      price_special: product.priceSpecial,
       stock: product.stock,
       category: product.category,
       sku: product.sku,
@@ -58,7 +66,9 @@ export async function updateProduct(id: string, updates: Partial<Product>): Prom
     .update({
       ...(updates.name !== undefined && { name: updates.name }),
       ...(updates.description !== undefined && { description: updates.description }),
-      ...(updates.price !== undefined && { price: updates.price }),
+      ...(updates.priceRetail !== undefined && { price_retail: updates.priceRetail }),
+      ...(updates.priceWholesale !== undefined && { price_wholesale: updates.priceWholesale }),
+      ...(updates.priceSpecial !== undefined && { price_special: updates.priceSpecial }),
       ...(updates.stock !== undefined && { stock: updates.stock }),
       ...(updates.category !== undefined && { category: updates.category }),
       ...(updates.sku !== undefined && { sku: updates.sku }),

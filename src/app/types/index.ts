@@ -2,12 +2,16 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  priceRetail: number;
+  priceWholesale: number;
+  priceSpecial: number;
   stock: number;
   category: string;
   sku: string;
   image?: string;
 }
+
+export type PriceType = 'retail' | 'wholesale' | 'special';
 
 export interface Client {
   id: string;
@@ -21,6 +25,7 @@ export interface Client {
 export interface SaleItem {
   productId: string;
   productName: string;
+  priceType?: PriceType;
   quantity: number;
   price: number;
   subtotal: number;
@@ -43,7 +48,9 @@ export const initialProducts: Product[] = [
     id: '1',
     name: 'Laptop HP Pavilion',
     description: 'Laptop con procesador Intel Core i5, 8GB RAM, 256GB SSD',
-    price: 799.99,
+    priceRetail: 799.99,
+    priceWholesale: 759.99,
+    priceSpecial: 729.99,
     stock: 15,
     category: 'Electrónica',
     sku: 'LAP-HP-001'
@@ -52,7 +59,9 @@ export const initialProducts: Product[] = [
     id: '2',
     name: 'Mouse Logitech MX',
     description: 'Mouse inalámbrico ergonómico de alta precisión',
-    price: 49.99,
+    priceRetail: 49.99,
+    priceWholesale: 44.99,
+    priceSpecial: 39.99,
     stock: 45,
     category: 'Accesorios',
     sku: 'MOU-LOG-001'
@@ -61,7 +70,9 @@ export const initialProducts: Product[] = [
     id: '3',
     name: 'Teclado Mecánico RGB',
     description: 'Teclado gaming con switches mecánicos y retroiluminación RGB',
-    price: 89.99,
+    priceRetail: 89.99,
+    priceWholesale: 82.99,
+    priceSpecial: 76.99,
     stock: 30,
     category: 'Accesorios',
     sku: 'KEY-RGB-001'
@@ -70,7 +81,9 @@ export const initialProducts: Product[] = [
     id: '4',
     name: 'Monitor Samsung 27"',
     description: 'Monitor Full HD 27 pulgadas con panel IPS',
-    price: 299.99,
+    priceRetail: 299.99,
+    priceWholesale: 284.99,
+    priceSpecial: 269.99,
     stock: 20,
     category: 'Electrónica',
     sku: 'MON-SAM-001'
@@ -79,7 +92,9 @@ export const initialProducts: Product[] = [
     id: '5',
     name: 'Silla Ergonómica',
     description: 'Silla de oficina con soporte lumbar ajustable',
-    price: 249.99,
+    priceRetail: 249.99,
+    priceWholesale: 234.99,
+    priceSpecial: 219.99,
     stock: 12,
     category: 'Muebles',
     sku: 'CHA-ERG-001'
